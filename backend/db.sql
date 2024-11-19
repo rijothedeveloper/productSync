@@ -1,20 +1,15 @@
 CREATE TABLE users (
   "id" SERIAL PRIMARY KEY,
   "name" varchar NOT NULL,
+  "userName" varchar NOT NULL UNIQUE,
+  "email" varchar NOT NULL,
   "business_name" varchar,
-  "phone_no" varchar NOT NULL,
-  "phone_to_text" varchar,
-  "website" varchar,
-  "facebook" varchar,
-  "instagram" varchar,
-  "yelp" varchar,
-  "street" varchar NOT NULL,
-  "city" varchar NOT NULL,
-  "zip_code" integer NOT NULL,
-  "state" varchar NOT NULL,
-  "county" varchar NOT NULL
+  "phone" varchar NOT NULL,
+  "password" varchar NOT NULL,
+  "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- INSERT INTO users (name, business_name, phone_no, phone_to_text, website, facebook, instagram, yelp, street, city, zip_code, "state", county)
--- VALUES ('rijo', null, '5103860112', null, null, null, null, null,'570 w tramonto dr', 'tracy', '95391','california','USA')
+-- INSERT INTO users (name, "userName", email, business_name, phone, password)
+-- VALUES ('rijo', 'rijo7', 'rijo7@gmail.com', null, '5103860112', 'pass')
 
