@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: productSyncAuthDB
+      POSTGRES_USER: rijo
+      POSTGRES_PASSWORD: password7
+    volumes:
+      - pgdata:/var/lib/postgresql/data3
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
