@@ -6,7 +6,7 @@ export async function registerUser(user: User) {
   try {
     const query = {
       text: `INSERT INTO users (name, "userName", email, business_name, phone, password)
-                VALUES ($1, $2, $3, $4, $5, $6)`,
+                VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
       values: [
         user.name,
         user.userName,
