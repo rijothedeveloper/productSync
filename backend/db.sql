@@ -1,5 +1,5 @@
-CREATE TABLE "user" (
-  "id" integer PRIMARY KEY,
+CREATE TABLE users (
+  "id" SERIAL PRIMARY KEY,
   "name" varchar NOT NULL,
   "business_name" varchar,
   "phone_no" varchar NOT NULL,
@@ -14,4 +14,7 @@ CREATE TABLE "user" (
   "state" varchar NOT NULL,
   "county" varchar NOT NULL
 );
+
+-- INSERT INTO users (name, business_name, phone_no, phone_to_text, website, facebook, instagram, yelp, street, city, zip_code, "state", county)
+-- VALUES ('rijo', null, '5103860112', null, null, null, null, null,'570 w tramonto dr', 'tracy', '95391','california','USA')
 
