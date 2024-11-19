@@ -4,7 +4,7 @@ const { Pool } = pg;
 
 let dbPool: pg.Pool;
 
-if (process.env.NODE_ENV === "test") {
+if (process.env.NODE_ENV === "development") {
   dbPool = new Pool({
     host: "localhost",
     user: "root",

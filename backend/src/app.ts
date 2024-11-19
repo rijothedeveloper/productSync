@@ -1,6 +1,7 @@
 import express from "express";
 import logger from "morgan";
 import authRoutes from "./routes/authentication.routes";
+import { globalErrorHandler } from "./middleware/ErrorHandler.middleware";
 
 // Create an Express application
 const app = express();
@@ -16,5 +17,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRoutes);
+
+app.use(globalErrorHandler);
 
 export default app;
