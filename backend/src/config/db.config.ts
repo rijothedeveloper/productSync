@@ -14,6 +14,26 @@ if (process.env.NODE_ENV === "development") {
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
   });
+} else if (process.env.NODE_ENV === "test") {
+  dbPool = new Pool({
+    host: "localhost",
+    user: "root",
+    password: "pass",
+    database: "productAuth",
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+  });
+} else if (process.env.NODE_ENV === "production") {
+  dbPool = new Pool({
+    host: "localhost",
+    user: "root",
+    password: "pass",
+    database: "productAuth",
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+  });
 } else {
   dbPool = new Pool({
     host: "localhost",
