@@ -1,6 +1,7 @@
 import request from "supertest";
 import app from "../app";
 import { describe } from "node:test";
+import dbPool from "../config/db.config";
 
 describe("auth api tests", () => {
   it("should create one user", async () => {
@@ -13,4 +14,8 @@ describe("auth api tests", () => {
     });
     expect(res.status).toBe(201);
   });
+});
+
+afterAll(() => {
+  dbPool.end();
 });

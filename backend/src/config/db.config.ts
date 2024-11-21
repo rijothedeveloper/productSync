@@ -7,9 +7,9 @@ let dbPool: pg.Pool;
 if (process.env.NODE_ENV === "development") {
   dbPool = new Pool({
     host: "localhost",
-    user: "root",
-    password: "pass",
-    database: "productAuth",
+    user: "rijo",
+    password: "password7",
+    database: "productSyncAuthDB",
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
@@ -17,9 +17,9 @@ if (process.env.NODE_ENV === "development") {
 } else if (process.env.NODE_ENV === "test") {
   dbPool = new Pool({
     host: "localhost",
-    user: "root",
-    password: "pass",
-    database: "productAuth",
+    user: "rijo",
+    password: "password7",
+    database: "productSyncAuthDB",
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
