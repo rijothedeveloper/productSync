@@ -1,9 +1,9 @@
 interface User {
   id: number | null;
-  userName: String;
+  userName: string;
   name: string;
   email: string;
-  business_name: string;
+  busines_name: string;
   phone: string;
   password: string;
   createdAt: string;

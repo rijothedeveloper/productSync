@@ -1,10 +1,12 @@
 import request from "supertest";
 import app from "../app";
 import { describe } from "node:test";
-import dbPool from "../config/db.config";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 describe("auth api tests", () => {
-  it("should create one user", async () => {
+  test("should create one user", async () => {
     const res = await request(app).post("/auth/register").send({
       name: "George",
       userName: "George7372test",
@@ -14,8 +16,14 @@ describe("auth api tests", () => {
     });
     expect(res.status).toBe(201);
   });
+
+  afterEach(async () => {
+    await prisma.users.delete({
+      where: {
+        userName: "George7372test",
+      },
+    });
+  });
 });
 
-afterAll(() => {
-  dbPool.end();
-});
+afterAll(() => {});
