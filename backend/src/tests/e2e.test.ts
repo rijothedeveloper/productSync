@@ -1,9 +1,7 @@
 import request from "supertest";
 import app from "../app";
 import { describe } from "node:test";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import dbPool from "../config/db.config";
 
 describe("auth api tests", () => {
   test("should create one user", async () => {
@@ -16,6 +14,7 @@ describe("auth api tests", () => {
     });
     expect(res.status).toBe(201);
   });
+
   test("should return error 400 if user name is not passed in body", async () => {
     const res = await request(app).post("/auth/register").send({
       name: "George",
@@ -26,7 +25,27 @@ describe("auth api tests", () => {
     // expect(res.status).toBe(400);
   });
 
+  test("should return error 400 if password is not passed in body", async () => {
+    const res = await request(app).post("/auth/register").send({
+      name: "George",
+      userName: "George7372_2test",
+      email: "george737test2@gmail.com",
+      phone: "5102365874",
+    });
+    expect(res.status).toBe(400);
+  });
+
   test("should return error 400 if password length is < 6", async () => {
+    const res = await request(app).post("/auth/register").send({
+      name: "George",
+      userName: "George7372test",
+      phone: "5102365874",
+      password: "pass",
+    });
+    expect(res.status).toBe(400);
+  });
+
+  test("should return error 400 if email is not passed in body", async () => {
     const res = await request(app).post("/auth/register").send({
       name: "George",
       userName: "George7372test",
@@ -41,27 +60,7 @@ describe("auth api tests", () => {
       name: "George",
       userName: "George7372test",
       phone: "5102365874",
-      password: "pass",
-    });
-    expect(res.status).toBe(400);
-  });
-
-  test("should return error 400 if password is not passed in body", async () => {
-    const res = await request(app).post("/auth/register").send({
-      name: "George",
-      userName: "George7372test",
-      email: "george737test@gmail.com",
-      phone: "5102365874",
-      password: "pass",
-    });
-    expect(res.status).toBe(400);
-  });
-  test("should return error 400 if password is not passed in body", async () => {
-    const res = await request(app).post("/auth/register").send({
-      name: "George",
-      userName: "George7372_2test",
-      email: "george737test2@gmail.com",
-      phone: "5102365874",
+      password: "pass22",
     });
     expect(res.status).toBe(400);
   });
@@ -89,12 +88,9 @@ describe("auth api tests", () => {
   });
 
   afterAll(async () => {
-    await prisma.users.delete({
-      where: {
-        userName: "George7372test",
-      },
-    });
+    const result = await dbPool.query(`DELETE FROM "Users" WHERE email = $1`, [
+      "george737test@gmail.com",
+    ]);
+    console.log(result);
   });
 });
-
-afterAll(() => {});

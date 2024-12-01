@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "tsx src/server.ts",
-    "test": "jest"
+    "dev": "tsx src/server.ts",
+    "test": "jest --forceExit",
+    "testWithCoverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",
