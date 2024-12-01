@@ -31,12 +31,7 @@ export async function registerUser(user: User) {
       return response;
     }
 
-    const result = await dbPool.query(
-      `SELECT "userName" FROM "Users" WHERE "userName" = $1`,
-      [user.userName]
-    );
-
-    if (result.rows.length > 0) {
+    if (await userNameExisted(user.userName)) {
       response = {
         error: "userName already exists",
         statusCode: 400,
@@ -44,12 +39,8 @@ export async function registerUser(user: User) {
       };
       return response;
     }
-    const emailResult = await dbPool.query(
-      `SELECT email FROM "Users" WHERE email = $1`,
-      [user.email]
-    );
 
-    if (emailResult.rows.length > 0) {
+    if (await emailExisted(user.email)) {
       response = {
         error: "email already exists",
         statusCode: 400,
@@ -57,6 +48,7 @@ export async function registerUser(user: User) {
       };
       return response;
     }
+
     const query = {
       text: `INSERT INTO "Users" (name, "userName", email, busines_name, phone, password)
                 VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
@@ -76,6 +68,22 @@ export async function registerUser(user: User) {
   }
   return response;
 }
+
+const userNameExisted = async (userName: string) => {
+  const result = await dbPool.query(
+    `SELECT "userName" FROM "Users" WHERE "userName" = $1`,
+    [userName]
+  );
+  return result.rows.length > 0;
+};
+
+const emailExisted = async (email: string) => {
+  const result = await dbPool.query(
+    `SELECT email FROM "Users" WHERE email = $1`,
+    [email]
+  );
+  return result.rows.length > 0;
+};
 
 // import { PrismaClient } from "@prisma/client";
 
