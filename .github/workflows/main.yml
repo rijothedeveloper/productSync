@@ -25,5 +25,9 @@ jobs:
 
       - run: npm install
         working-directory: backend
+      - name: Start application-specific services using Docker Compose
+        run: docker-compose up -d
+        working-directory: backend
+        continue-on-error: false
       - run: npm test
         working-directory: backend
