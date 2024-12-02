@@ -1,6 +1,12 @@
 import dbPool from "../config/db.config";
+import bcryptjs from "bcryptjs";
+import { generateToken } from "../utils/generateToken";
 
-let response: { error: any; statusCode: number; data: object | null };
+interface Data {
+  newUser: object;
+  token: string;
+}
+let response: { error: any; statusCode: number; data: Data | null };
 
 export async function registerUser(user: User) {
   try {
@@ -49,20 +55,32 @@ export async function registerUser(user: User) {
       return response;
     }
 
+    const salt = await bcryptjs.genSaltSync(10);
+    const hashedPassword = await bcryptjs.hash(user.password, salt);
+
     const query = {
       text: `INSERT INTO "Users" (name, "userName", email, busines_name, phone, password)
-                VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+                VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, "userName", email, busines_name, phone`,
       values: [
         user.name,
         user.userName,
         user.email,
         user.busines_name,
         user.phone,
-        user.password,
+        hashedPassword,
       ],
     };
-    const newUser = await dbPool.query(query);
-    response = { error: null, statusCode: 201, data: newUser };
+    const newUser = (await dbPool.query(query)).rows[0];
+    const token = generateToken(newUser.id);
+    if (!token) {
+      response = {
+        error: "couldn't generate token",
+        statusCode: 400,
+        data: null,
+      };
+      return response;
+    }
+    response = { error: null, statusCode: 201, data: { newUser, token } };
   } catch (error) {
     response = { error, statusCode: 500, data: null };
   }

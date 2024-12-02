@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx src/server.ts",
-    "test": "jest --forceExit",
+    "dev": "tsx --env-file=.env src/server.ts",
+    "test": "jest --env-file=.env --forceExit",
     "testWithCoverage": "jest --coverage"
   },
   "keywords": [],
@@ -13,8 +13,10 @@
   "description": "",
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.10.1",
     "@types/pg": "^8.11.10",
@@ -27,7 +29,9 @@
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
+    "bcryptjs": "^2.4.3",
     "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "pg": "^8.13.1"
   }

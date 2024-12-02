@@ -4,6 +4,9 @@ import { describe } from "node:test";
 import dbPool from "../config/db.config";
 
 describe("auth api tests", () => {
+  beforeAll(async () => {
+    process.env.JWT_SECRET = "test";
+  });
   test("should create one user", async () => {
     const res = await request(app).post("/auth/register").send({
       name: "George",
@@ -13,6 +16,9 @@ describe("auth api tests", () => {
       password: "pass22",
     });
     expect(res.status).toBe(201);
+    expect(res.body.data.newUser).toHaveProperty("id");
+    expect(res.body.data.newUser.name).toEqual("George");
+    expect(res.body.data.newUser.userName).toEqual("George7372test");
   });
 
   test("should return error 400 if user name is not passed in body", async () => {
