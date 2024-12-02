@@ -3,7 +3,7 @@ import bcryptjs from "bcryptjs";
 import { generateToken } from "../utils/generateToken";
 
 interface Data {
-  newUser: object;
+  user: object;
   token: string;
 }
 let response: { error: any; statusCode: number; data: Data | null };
@@ -80,7 +80,7 @@ export async function registerUser(user: User) {
       };
       return response;
     }
-    response = { error: null, statusCode: 201, data: { newUser, token } };
+    response = { error: null, statusCode: 201, data: { user: newUser, token } };
   } catch (error) {
     response = { error, statusCode: 500, data: null };
   }
@@ -102,6 +102,60 @@ const emailExisted = async (email: string) => {
   );
   return result.rows.length > 0;
 };
+
+export async function loginUser(userName: string, password: string) {
+  if (!userName || !password) {
+    response = {
+      error: "userName, email and password are required",
+      statusCode: 400,
+      data: null,
+    };
+    return response;
+  }
+  try {
+    const user = await dbPool.query(
+      `SELECT * FROM "Users" WHERE "userName" = $1`,
+      [userName]
+    );
+    if (user.rows.length === 0) {
+      response = {
+        error: "userName doesn't exist",
+        statusCode: 400,
+        data: null,
+      };
+      return response;
+    }
+    const isPasswordCorrect = await bcryptjs.compare(
+      password,
+      user.rows[0].password
+    );
+    if (!isPasswordCorrect) {
+      response = {
+        error: "password is incorrect",
+        statusCode: 400,
+        data: null,
+      };
+      return response;
+    }
+    const token = generateToken(user.rows[0].id);
+    if (!token) {
+      response = {
+        error: "couldn't generate token",
+        statusCode: 400,
+        data: null,
+      };
+      return response;
+    }
+    response = {
+      error: null,
+      statusCode: 200,
+      data: { user: user.rows[0], token },
+    };
+  } catch (error) {
+    response = { error, statusCode: 500, data: null };
+  }
+  return response;
+}
 
 // import { PrismaClient } from "@prisma/client";
 

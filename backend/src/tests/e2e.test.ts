@@ -16,9 +16,9 @@ describe("auth api tests", () => {
       password: "pass22",
     });
     expect(res.status).toBe(201);
-    expect(res.body.data.newUser).toHaveProperty("id");
-    expect(res.body.data.newUser.name).toEqual("George");
-    expect(res.body.data.newUser.userName).toEqual("George7372test");
+    expect(res.body.data.user).toHaveProperty("id");
+    expect(res.body.data.user.name).toEqual("George");
+    expect(res.body.data.user.userName).toEqual("George7372test");
   });
 
   test("should return error 400 if user name is not passed in body", async () => {
@@ -91,6 +91,16 @@ describe("auth api tests", () => {
       password: "pass",
     });
     expect(res.status).toBe(400);
+  });
+
+  test("should login the registered user", async () => {
+    const res = await request(app).post("/auth/login").send({
+      userName: "George7372test",
+      password: "pass22",
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.data.user).toHaveProperty("id");
+    expect(res.body.data).toHaveProperty("token");
   });
 
   afterAll(async () => {
