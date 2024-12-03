@@ -1,6 +1,7 @@
 import dbPool from "../config/db.config";
 import bcryptjs from "bcryptjs";
 import { generateToken } from "../utils/generateToken";
+import { User } from "../models/User.model";
 
 interface Data {
   user: object;

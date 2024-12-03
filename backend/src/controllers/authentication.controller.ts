@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import * as authenticationService from "../services/authentication.service";
 import { AppError } from "../middleware/ErrorHandler.middleware";
 import { setTokenOnCookie } from "../utils/setTokenOnCookie";
+import { User } from "../models/User.model";
 
 export async function registerUser(
   req: Request,
