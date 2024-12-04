@@ -1,7 +1,10 @@
 import request from "supertest";
 import app from "../app";
 import { describe } from "node:test";
-import dbPool from "../config/db.config";
+import DBConfig from "../config/db.config";
+import PostGresConnection from "../db/db";
+
+const db = new PostGresConnection(DBConfig);
 
 describe("auth api tests", () => {
   beforeAll(async () => {
@@ -104,7 +107,7 @@ describe("auth api tests", () => {
   });
 
   afterAll(async () => {
-    const result = await dbPool.query(`DELETE FROM "Users" WHERE email = $1`, [
+    const result = await db.query(`DELETE FROM "Users" WHERE email = $1`, [
       "george737test@gmail.com",
     ]);
     console.log(result);

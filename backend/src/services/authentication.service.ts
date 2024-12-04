@@ -1,13 +1,16 @@
-import dbPool from "../config/db.config";
 import bcryptjs from "bcryptjs";
 import { generateToken } from "../utils/generateToken";
 import { User } from "../models/User.model";
+import DBConfig from "../config/db.config";
+import PostGresConnection from "../db/db";
 
 interface Data {
   user: object;
   token: string;
 }
 let response: { error: any; statusCode: number; data: Data | null };
+
+const db = new PostGresConnection(DBConfig);
 
 export async function registerUser(user: User) {
   try {
@@ -71,7 +74,7 @@ export async function registerUser(user: User) {
         hashedPassword,
       ],
     };
-    const newUser = (await dbPool.query(query)).rows[0];
+    const newUser = (await db.query(query.text, query.values)).rows[0];
     const token = generateToken(newUser.id);
     if (!token) {
       response = {
@@ -89,7 +92,7 @@ export async function registerUser(user: User) {
 }
 
 const userNameExisted = async (userName: string) => {
-  const result = await dbPool.query(
+  const result = await db.query(
     `SELECT "userName" FROM "Users" WHERE "userName" = $1`,
     [userName]
   );
@@ -97,10 +100,9 @@ const userNameExisted = async (userName: string) => {
 };
 
 const emailExisted = async (email: string) => {
-  const result = await dbPool.query(
-    `SELECT email FROM "Users" WHERE email = $1`,
-    [email]
-  );
+  const result = await db.query(`SELECT email FROM "Users" WHERE email = $1`, [
+    email,
+  ]);
   return result.rows.length > 0;
 };
 
@@ -114,10 +116,9 @@ export async function loginUser(userName: string, password: string) {
     return response;
   }
   try {
-    const user = await dbPool.query(
-      `SELECT * FROM "Users" WHERE "userName" = $1`,
-      [userName]
-    );
+    const user = await db.query(`SELECT * FROM "Users" WHERE "userName" = $1`, [
+      userName,
+    ]);
     if (user.rows.length === 0) {
       response = {
         error: "userName doesn't exist",
