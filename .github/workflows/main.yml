@@ -9,6 +9,8 @@ on:
     branches:
       - main
       - dev
+    paths:
+      - "backend/AuthService/**"
 
 jobs:
   build:
@@ -19,12 +21,12 @@ jobs:
       - name: Use Node.js 14
         uses: actions/setup-node@v3
         with:
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: backend/AuthService/package-lock.json
           node-version: "20.x"
           cache: "npm"
 
       - run: npm install
-        working-directory: backend
+        working-directory: backend/AuthService
 
       - name: Install Docker Compose
         run: |
@@ -35,8 +37,8 @@ jobs:
 
       - name: Start application-specific services using Docker Compose
         run: docker-compose up -d
-        working-directory: backend
+        working-directory: backend/AuthService
         continue-on-error: false
 
       - run: npm test
-        working-directory: backend
+        working-directory: backend/AuthService
