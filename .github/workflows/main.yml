@@ -5,8 +5,8 @@ on:
     branches:
       - main
       - dev
-    # paths:
-    #   - "backend/AuthService/**"
+    paths:
+      - "backend/AuthService/**"
   pull_request:
     branches:
       - main

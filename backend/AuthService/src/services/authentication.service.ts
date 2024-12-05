@@ -12,6 +12,7 @@ let response: { error: any; statusCode: number; data: Data | null };
 
 const db = new PostGresConnection(DBConfig);
 
+// register new user
 export async function registerUser(user: User) {
   try {
     if (!user.userName || !user.email || !user.password) {
