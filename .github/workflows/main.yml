@@ -21,8 +21,9 @@ jobs:
         image: postgis/postgis:16-3.4
         env:
           # must specify password for PG Docker container image, see: https://registry.hub.docker.com/_/postgres?tab=description&page=1&name=10
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: your_test_db_name
+          POSTGRES_USER: rijo
+          POSTGRES_PASSWORD: password7
+          POSTGRES_DB: productSyncAuthDB
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
@@ -39,6 +40,13 @@ jobs:
 
       - run: npm install
         working-directory: backend/AuthService
+
+      - name: Import DB seed data
+        run: psql -d postgresql://postgres@localhost/productSyncAuthDB -f init.sql
+        working-directory: backend/AuthService
+        env:
+          POSTGRES_USER: rijo
+          POSTGRES_PASSWORD: password7
 
       # - name: Install Docker Compose
       #   run: |
