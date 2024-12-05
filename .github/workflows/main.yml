@@ -45,6 +45,7 @@ jobs:
         run: psql -d postgresql://postgres@localhost/productSyncAuthDB -f init.sql
         working-directory: backend/AuthService
         env:
+          PGUSER: rijo
           PGPASSWORD: password7
 
       # - name: Install Docker Compose
