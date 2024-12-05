@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx --env-file=.env src/server.ts",
-    "test": "jest --env-file=.env --forceExit",
+    "test": "jest --env-file=.env.test --forceExit",
     "testWithCoverage": "jest --coverage"
   },
   "keywords": [],
