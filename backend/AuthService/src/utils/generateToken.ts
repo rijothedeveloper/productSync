@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const generateToken = (userId: string) => {
+export const generateToken = (userId: number) => {
   let secret = "test";
   if (process.env.JWT_SECRET) {
     secret = process.env.JWT_SECRET;

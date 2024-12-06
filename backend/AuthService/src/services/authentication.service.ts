@@ -3,14 +3,17 @@ import { generateToken } from "../utils/generateToken";
 import { User } from "../models/User.model";
 import DBConfig from "../config/db.config";
 import PostGresConnection from "../db/db";
+import UserRepository from "../repository/user.repository";
 
 interface Data {
   user: object;
   token: string;
 }
+
 let response: { error: any; statusCode: number; data: Data | null };
 
 const db = new PostGresConnection(DBConfig);
+const userRepository = new UserRepository(db);
 
 // register new user
 export async function registerUser(user: User) {
@@ -62,20 +65,31 @@ export async function registerUser(user: User) {
 
     const salt = await bcryptjs.genSaltSync(10);
     const hashedPassword = await bcryptjs.hash(user.password, salt);
+    user.password = hashedPassword;
 
-    const query = {
-      text: `INSERT INTO "Users" (name, "userName", email, busines_name, phone, password)
-                VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, "userName", email, busines_name, phone`,
-      values: [
-        user.name,
-        user.userName,
-        user.email,
-        user.busines_name,
-        user.phone,
-        hashedPassword,
-      ],
-    };
-    const newUser = (await db.query(query.text, query.values)).rows[0];
+    // const query = {
+    //   text: `INSERT INTO "Users" (name, "userName", email, busines_name, phone, password)
+    //             VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, "userName", email, busines_name, phone`,
+    //   values: [
+    //     user.name,
+    //     user.userName,
+    //     user.email,
+    //     user.busines_name,
+    //     user.phone,
+    //     hashedPassword,
+    //   ],
+    // };
+    // const newUser = (await db.query(query.text, query.values)).rows[0];
+    const newUser = await userRepository.addUser(user);
+
+    if (!newUser.id) {
+      response = {
+        error: "User ID is undefined in new user",
+        statusCode: 400,
+        data: null,
+      };
+      return response;
+    }
     const token = generateToken(newUser.id);
     if (!token) {
       response = {
@@ -93,18 +107,13 @@ export async function registerUser(user: User) {
 }
 
 const userNameExisted = async (userName: string) => {
-  const result = await db.query(
-    `SELECT "userName" FROM "Users" WHERE "userName" = $1`,
-    [userName]
-  );
-  return result.rows.length > 0;
+  const userNameExisted = await userRepository.userNameExisted(userName);
+  return userNameExisted;
 };
 
 const emailExisted = async (email: string) => {
-  const result = await db.query(`SELECT email FROM "Users" WHERE email = $1`, [
-    email,
-  ]);
-  return result.rows.length > 0;
+  const emailExisted = await userRepository.emailExisted(email);
+  return emailExisted;
 };
 
 export async function loginUser(userName: string, password: string) {
@@ -117,10 +126,8 @@ export async function loginUser(userName: string, password: string) {
     return response;
   }
   try {
-    const user = await db.query(`SELECT * FROM "Users" WHERE "userName" = $1`, [
-      userName,
-    ]);
-    if (user.rows.length === 0) {
+    const user = await userRepository.getUserByUsername(userName);
+    if (!user) {
       response = {
         error: "userName doesn't exist",
         statusCode: 400,
@@ -128,10 +135,7 @@ export async function loginUser(userName: string, password: string) {
       };
       return response;
     }
-    const isPasswordCorrect = await bcryptjs.compare(
-      password,
-      user.rows[0].password
-    );
+    const isPasswordCorrect = await bcryptjs.compare(password, user.password);
     if (!isPasswordCorrect) {
       response = {
         error: "password is incorrect",
@@ -140,7 +144,15 @@ export async function loginUser(userName: string, password: string) {
       };
       return response;
     }
-    const token = generateToken(user.rows[0].id);
+    if (!user.id) {
+      response = {
+        error: "User ID is undefined in logged user",
+        statusCode: 400,
+        data: null,
+      };
+      return response;
+    }
+    const token = generateToken(user.id);
     if (!token) {
       response = {
         error: "couldn't generate token",
@@ -152,7 +164,7 @@ export async function loginUser(userName: string, password: string) {
     response = {
       error: null,
       statusCode: 200,
-      data: { user: user.rows[0], token },
+      data: { user: user, token },
     };
   } catch (error) {
     response = { error, statusCode: 500, data: null };
